@@ -163,7 +163,7 @@ func (s *Server) handleQuery(query *dns.Msg, from net.Addr) error {
 
 	// Handle each question
 	for _, q := range query.Question {
-		mrecs, urecs := s.handleQuestion(q)
+		mrecs, urecs := s.handleQuestion(q, from)
 		multicastAnswer = append(multicastAnswer, mrecs...)
 		unicastAnswer = append(unicastAnswer, urecs...)
 	}
@@ -246,8 +246,8 @@ func (s *Server) handleQuery(query *dns.Msg, from net.Addr) error {
 //
 // The response to a question may be transmitted over multicast, unicast, or
 // both.  The return values are DNS records for each transmission type.
-func (s *Server) handleQuestion(q dns.Question) (multicastRecs, unicastRecs []dns.RR) {
-	records := s.config.Zone.Records(q)
+func (s *Server) handleQuestion(q dns.Question, from net.Addr) (multicastRecs, unicastRecs []dns.RR) {
+	records := s.config.Zone.Records(q, from)
 
 	if len(records) == 0 {
 		return nil, nil

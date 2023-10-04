@@ -21,7 +21,7 @@ const (
 // to serve records dynamically
 type Zone interface {
 	// Records returns DNS records in response to a DNS question.
-	Records(q dns.Question) []dns.RR
+	Records(q dns.Question, from net.Addr) []dns.RR
 }
 
 // MDNSService is used to export a named service by implementing a Zone
@@ -137,7 +137,7 @@ func trimDot(s string) string {
 }
 
 // Records returns DNS records in response to a DNS question.
-func (m *MDNSService) Records(q dns.Question) []dns.RR {
+func (m *MDNSService) Records(q dns.Question, from net.Addr) []dns.RR {
 	switch q.Name {
 	case m.enumAddr:
 		return m.serviceEnum(q)
